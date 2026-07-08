@@ -1,0 +1,70 @@
+# =============================================================================
+# snapshot.timer
+# =============================================================================
+#
+# PURPOSE:
+#   systemd timer unit that triggers snapshot.service on a daily schedule.
+#   This is the scheduling mechanism for unattended snapshot capture on
+#   RHEL 9, functionally equivalent to the Windows Scheduled Task created
+#   by Register-SnapshotTask.ps1.
+#
+# WHY THIS EXISTS:
+#   A service unit alone does not run itself -- it must be triggered. This
+#   timer unit provides that trigger using OnCalendar syntax, which is
+#   readable, auditable, and natively integrated with systemd's logging and
+#   dependency model. See snapshot.service for the full rationale on why
+#   systemd timers are used in preference to cron in this toolkit.
+#
+# DEPLOYMENT:
+#   Copy this file to /etc/systemd/system/snapshot.timer (alongside
+#   snapshot.service, which must already be deployed with correct paths),
+#   then run:
+#     systemctl daemon-reload
+#     systemctl enable --now snapshot.timer
+#   See docs/operational-guide.md for full step-by-step installation
+#   instructions.
+#
+# CHANGING THE SCHEDULE:
+#   Edit the OnCalendar value below. Examples:
+#     OnCalendar=*-*-* 02:00:00        Daily at 02:00 (default)
+#     OnCalendar=*-*-* 02,14:00:00     Twice daily, at 02:00 and 14:00
+#     OnCalendar=Mon..Fri *-*-* 02:00:00   Weekdays only, at 02:00
+#   After editing, run `systemctl daemon-reload` and
+#   `systemctl restart snapshot.timer` for the change to take effect.
+#   Verify the next scheduled run with:
+#     systemctl list-timers snapshot.timer
+#
+# =============================================================================
+
+[Unit]
+Description=server-config-drift-detector — Daily timer for configuration snapshot capture
+Documentation=https://github.com/YOUR-USERNAME/server-config-drift-detector
+
+[Timer]
+# Daily at 02:00, matching the default trigger time used in the Windows
+# Scheduled Task (Register-SnapshotTask.ps1), chosen for operational
+# consistency between platforms and to run during typical low-activity hours.
+OnCalendar=*-*-* 02:00:00
+
+# WHY THIS MATTERS OPERATIONALLY:
+# Persistent=true ensures that if the system is powered off, suspended, or
+# otherwise unavailable at the scheduled 02:00 trigger time, the timer will
+# fire as soon as the system is next available, rather than silently
+# skipping that day's snapshot entirely. This is one of the concrete
+# advantages of systemd timers over cron referenced in snapshot.service --
+# cron has no equivalent catch-up mechanism by default. For a drift
+# detection tool, a silently skipped snapshot is itself an operational gap:
+# it creates a hole in the historical record with no indication that
+# anything was missed.
+Persistent=true
+
+# Spreads actual execution randomly within this window after the scheduled
+# time. Not operationally significant for a single standalone server, but
+# included as good practice: if this toolkit is deployed identically across
+# multiple servers via the same deployment process, this prevents every
+# server from hitting disk I/O for snapshot capture in the exact same
+# second.
+RandomizedDelaySec=120
+
+[Install]
+WantedBy=timers.target
