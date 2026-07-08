@@ -1,0 +1,150 @@
+# =============================================================================
+# server-config-drift-detector — .gitignore
+# =============================================================================
+# Purpose:
+#   Prevent sensitive, environment-specific, and generated files from being
+#   committed to version control.
+#
+# Security note:
+#   Snapshot files contain sensitive system information — local user accounts,
+#   installed software inventories, firewall rules, service configurations,
+#   and configuration file checksums. These files must never be committed to
+#   a repository, public or private. This file enforces that boundary.
+#
+# Maintenance:
+#   If snapshot output directories are changed in snapshot-config.json or
+#   snapshot.conf, update the exclusion paths in this file to match.
+# =============================================================================
+
+
+# =============================================================================
+# SNAPSHOT OUTPUT — CRITICAL
+# These directories hold live snapshot data. Never commit snapshot files.
+# =============================================================================
+
+snapshots/
+output/
+reports/
+diff/
+*.snapshot.json
+*-snapshot.json
+*-diff.json
+*-drift.json
+*-report.json
+
+
+# =============================================================================
+# LOG FILES
+# Script execution logs must not be committed.
+# =============================================================================
+
+logs/
+*.log
+
+
+# =============================================================================
+# WINDOWS — OS AND EDITOR ARTIFACTS
+# =============================================================================
+
+# Windows thumbnail cache
+Thumbs.db
+ehthumbs.db
+
+# Windows folder metadata
+Desktop.ini
+
+# Windows shortcut files
+*.lnk
+
+# Recycle Bin artifacts
+$RECYCLE.BIN/
+
+# PowerShell session state
+*.psess
+
+# PowerShell transcript files (may contain sensitive command output)
+*transcript*.txt
+PowerShell_transcript*.txt
+
+
+# =============================================================================
+# LINUX — OS AND EDITOR ARTIFACTS
+# =============================================================================
+
+# Swap files created by vi and vim
+*.swp
+*.swo
+*~
+
+# Core dumps
+core
+
+# Temporary files
+*.tmp
+*.temp
+
+
+# =============================================================================
+# EDITOR AND IDE ARTIFACTS
+# =============================================================================
+
+# Visual Studio Code
+.vscode/
+
+# JetBrains IDEs
+.idea/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Notepad++
+nppBackup/
+
+
+# =============================================================================
+# macOS ARTIFACTS
+# Excluded in case the repository is cloned on a macOS workstation.
+# =============================================================================
+
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+
+# =============================================================================
+# SENSITIVE CONFIGURATION OVERRIDES
+# Operators may create local configuration overrides containing environment-
+# specific paths, credentials, or hostnames. These must not be committed.
+# =============================================================================
+
+snapshot-config.local.json
+snapshot.local.conf
+*.local.json
+*.local.conf
+
+
+# =============================================================================
+# PYTHON ARTIFACTS
+# compare-snapshots.sh uses Python 3 for JSON parsing. Exclude any Python
+# cache or virtual environment directories if development work is done locally.
+# =============================================================================
+
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+
+# =============================================================================
+# EXPLICITLY TRACKED — DO NOT ADD ABOVE PATTERNS THAT WOULD EXCLUDE THESE
+# The following files must always be committed. Listed here for clarity.
+#
+#   windows/config/snapshot-config.json   (template defaults only, no live data)
+#   linux/config/snapshot.conf            (template defaults only, no live data)
+#   samples/                              (anonymised static examples, not live)
+# =============================================================================
