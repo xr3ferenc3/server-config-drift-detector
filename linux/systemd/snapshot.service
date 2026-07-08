@@ -1,0 +1,145 @@
+# =============================================================================
+# snapshot.service
+# =============================================================================
+#
+# PURPOSE:
+#   systemd service unit that executes take-snapshot.sh. This is the unit
+#   triggered by snapshot.timer to provide unattended, scheduled snapshot
+#   capture on RHEL 9.
+#
+# WHY THIS EXISTS:
+#   Manual snapshot execution does not scale operationally -- it depends on
+#   a human remembering to run it. Automated scheduling is what makes
+#   ongoing drift detection possible without daily manual intervention.
+#
+# WHY SYSTEMD TIMERS RATHER THAN CRON:
+#   RHEL 9 environments increasingly favour systemd timers over cron for
+#   scheduled execution, for several concrete operational reasons:
+#     - Execution history is queryable via `journalctl -u snapshot.service`
+#       and `systemctl status snapshot.timer`, without needing to configure
+#       cron's separate mail/logging mechanism.
+#     - Persistent timers (see snapshot.timer) automatically catch up a
+#       missed run if the system was powered off at the scheduled time --
+#       cron simply skips the run silently.
+#     - Resource and security controls (the hardening directives below) are
+#       expressed natively in the unit file, rather than requiring a
+#       separate wrapper script.
+#     - Dependency ordering against other units (e.g. ensuring the network
+#       or local filesystems are ready) is handled declaratively.
+#   This is a deliberate modern-practice choice. The RHCSA Red Hat
+#   Enterprise Linux 9 Certification Study Guide covers cron as a valid
+#   scheduling mechanism, and cron remains fully supported on RHEL 9. This
+#   toolkit uses systemd timers instead because the operational benefits
+#   above are directly relevant to a drift-detection tool, where execution
+#   reliability and auditability are part of the tool's own value
+#   proposition.
+#
+# SECURITY HARDENING RATIONALE:
+#   This service runs as root, which is required for /etc/shadow parsing,
+#   /var/spool/cron/ access, and complete firewalld zone enumeration (see
+#   docs/snapshot-methodology.md). Running as root carries inherent risk if
+#   the script or its dependencies are ever compromised (see
+#   docs/threat-model.md, Threat 6 -- Privileged Execution Abuse). The
+#   hardening directives below reduce the blast radius of that risk without
+#   preventing the script from performing its required reads.
+#
+# DEPLOYMENT:
+#   Copy this file to /etc/systemd/system/snapshot.service, edit the
+#   ExecStart path and ReadWritePaths to match your actual repository
+#   location, then run:
+#     systemctl daemon-reload
+#     systemctl enable --now snapshot.timer
+#   See docs/operational-guide.md for full step-by-step installation
+#   instructions.
+#
+# =============================================================================
+
+[Unit]
+Description=server-config-drift-detector - Capture daily configuration snapshot
+Documentation=https://github.com/YOUR-USERNAME/server-config-drift-detector
+After=network.target local-fs.target
+ConditionACPower=true
+
+[Service]
+Type=oneshot
+
+# WHY: Absolute paths are required. Like the Windows Scheduled Task, this
+# service runs outside of any interactive shell context, so relative paths
+# would not resolve predictably. Replace these two placeholder paths with
+# your actual repository location before deployment.
+ExecStart=/usr/bin/bash /opt/server-config-drift-detector/linux/scripts/take-snapshot.sh --config /opt/server-config-drift-detector/linux/config/snapshot.conf --label scheduled
+
+# WHY: root is required for this script's full-fidelity capture (shadow
+# file, cron spool, complete firewalld data). See
+# docs/snapshot-methodology.md for the per-category justification.
+User=root
+Group=root
+
+# --- Security Hardening Directives ---
+# WHY EACH DIRECTIVE IS PRESENT:
+
+# Prevents the process and any child process from gaining new privileges
+# beyond what it starts with (e.g. via setuid binaries). The snapshot
+# script does not need to escalate further than the root context it
+# already runs in.
+NoNewPrivileges=true
+
+# Gives the service its own private /tmp, isolated from other processes
+# on the system. The script uses mktemp for intermediate working files;
+# this ensures those temporary files are not visible to or tamperable by
+# other processes outside this service's execution.
+PrivateTmp=true
+
+# WHY THIS IS NOT SET TO "strict" OR "yes":
+# ProtectSystem=strict would make the entire filesystem read-only except
+# for explicitly listed ReadWritePaths, which is the ideal posture. It is
+# set to "true" here (which protects /usr, /boot, /etc as read-only but
+# leaves most of the filesystem writable) because the script reads from
+# many paths across the filesystem (/etc/passwd, /etc/shadow, /etc/sudoers,
+# /var/spool/cron, /etc/ssh, etc.) that would otherwise need to be
+# individually allow-listed as ReadOnlyPaths, adding significant
+# maintenance burden for marginal additional protection. Operators in
+# higher-security environments are encouraged to evaluate ProtectSystem=strict
+# with explicit ReadOnlyPaths added for the paths read-only by this script.
+ProtectSystem=true
+
+# Restricts write access to only the directories the script actually needs
+# to write to: its own snapshot, log, diff, and report output directories.
+# Update this path to match your actual repository location.
+ReadWritePaths=/opt/server-config-drift-detector/snapshots /opt/server-config-drift-detector/logs
+
+# Prevents the service from loading kernel modules. Not required for
+# snapshot capture.
+ProtectKernelModules=true
+
+# Prevents the service from modifying kernel tunables via /proc/sys or
+# /sys. Not required for snapshot capture.
+ProtectKernelTunables=true
+
+# Prevents the service from modifying control groups. Not required for
+# snapshot capture.
+ProtectControlGroups=true
+
+# Restricts the service to only the AF_UNIX, AF_INET, and AF_INET6 address
+# families. The script does not require raw sockets or exotic protocol
+# families to enumerate listening ports (it shells out to `ss`, which uses
+# netlink sockets covered by AF_NETLINK -- included below).
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+
+# Limits how long a single snapshot run may execute before systemd
+# terminates it. Mirrors the ExecutionTimeLimit setting in the equivalent
+# Windows Scheduled Task (Register-SnapshotTask.ps1), preventing a hung
+# run from blocking the next scheduled execution indefinitely.
+TimeoutStartSec=1800
+
+# Standard output and error are sent to the systemd journal, queryable via
+# `journalctl -u snapshot.service`. This is in addition to, not instead of,
+# the script's own log file written to the configured LOG_DIR -- the
+# journal captures the process-level view (start/stop/exit code) while the
+# script's own log captures the application-level detail (per-category
+# capture results).
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
