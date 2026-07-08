@@ -1,0 +1,102 @@
+{
+  "_comment_purpose": "Operator-controlled configuration for New-ConfigSnapshot.ps1, Compare-ConfigSnapshots.ps1, and Invoke-DriftReport.ps1. Edit values below to suit your environment. Do not remove keys; set capture categories to false instead of deleting them.",
+
+  "schemaVersion": "1.0",
+
+  "output": {
+    "_comment": "Directories for snapshot, diff, and report output. Paths may be absolute or relative to the repository root. These directories are excluded from version control by .gitignore.",
+    "snapshotDirectory": "snapshots",
+    "diffDirectory": "diff",
+    "reportDirectory": "reports",
+    "logDirectory": "logs"
+  },
+
+  "retention": {
+    "_comment": "Number of comparison snapshots to retain before the oldest is automatically removed. Baseline snapshots (label = 'baseline') are exempt from retention and are never automatically removed.",
+    "maxComparisonSnapshots": 30,
+    "maxDiffFiles": 30,
+    "maxReportFiles": 30
+  },
+
+  "captureCategories": {
+    "_comment": "Set any category to false to exclude it from snapshot capture. Excluding a category removes it from both snapshot output and drift comparison.",
+    "installedSoftware": true,
+    "services": true,
+    "localUsers": true,
+    "firewallRules": true,
+    "scheduledTasks": true,
+    "listeningPorts": true,
+    "pendingUpdates": true
+  },
+
+  "installedSoftwareOptions": {
+    "_comment": "Win32_Product WMI queries can trigger Windows Installer self-repair on some systems. Set useWmiQuery to false to rely on registry enumeration only, which is the safer default.",
+    "useWmiQuery": false,
+    "useRegistryEnumeration": true
+  },
+
+  "severityThresholds": {
+    "_comment": "Severity classification applied by Invoke-DriftReport.ps1. Categories not listed default to NOTABLE for any change and CRITICAL for any addition of a privileged or security-relevant entry.",
+    "installedSoftware": {
+      "added": "INFORMATIONAL",
+      "removed": "NOTABLE",
+      "modified": "INFORMATIONAL"
+    },
+    "services": {
+      "added": "NOTABLE",
+      "removed": "CRITICAL",
+      "modified": "NOTABLE"
+    },
+    "localUsers": {
+      "added": "CRITICAL",
+      "removed": "CRITICAL",
+      "modified": "CRITICAL"
+    },
+    "firewallRules": {
+      "added": "NOTABLE",
+      "removed": "CRITICAL",
+      "modified": "CRITICAL"
+    },
+    "scheduledTasks": {
+      "added": "CRITICAL",
+      "removed": "NOTABLE",
+      "modified": "CRITICAL"
+    },
+    "listeningPorts": {
+      "added": "NOTABLE",
+      "removed": "INFORMATIONAL",
+      "modified": "NOTABLE"
+    },
+    "pendingUpdates": {
+      "added": "INFORMATIONAL",
+      "removed": "INFORMATIONAL",
+      "modified": "INFORMATIONAL"
+    }
+  },
+
+  "adminGroupNames": {
+    "_comment": "Local group names treated as privileged for severity escalation purposes. Membership changes to these groups are always classified CRITICAL regardless of the localUsers threshold above.",
+    "groups": [
+      "Administrators",
+      "Remote Desktop Users",
+      "Backup Operators"
+    ]
+  },
+
+  "reportOptions": {
+    "_comment": "Controls output format of Invoke-DriftReport.ps1.",
+    "generateMarkdown": true,
+    "generateJson": true,
+    "includeUnchangedCategoriesInSummary": true,
+    "includeInformationalChangesInDetail": true
+  },
+
+  "logging": {
+    "_comment": "Controls script execution logging. Logs record script start/end, errors, and category-level capture success/failure. Logs do not contain captured data itself.",
+    "enabled": true,
+    "logLevel": "INFO",
+    "logRetentionDays": 30
+  },
+
+  "scriptVersion": "1.0.0"
+}
