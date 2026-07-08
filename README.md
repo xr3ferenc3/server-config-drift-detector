@@ -317,4 +317,4 @@ This is a portfolio and operational reference project. It is not accepting exter
 
 MIT License. See `LICENSE` for full terms.
 
----
+

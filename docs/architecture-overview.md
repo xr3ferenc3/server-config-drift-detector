@@ -23,32 +23,32 @@ This toolkit is built on three operational principles.
 ## System Components
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
+┌──────────────────────────────────────────────────────────────────┐
 │                        OPERATOR / SCHEDULER                      │
 │              (manual execution or automated schedule)            │
-└───────────────────────────┬─────────────────────────────────────┘
+└───────────────────────────┬──────────────────────────────────────┘
                             │
                             ▼
-┌─────────────────────────────────────────────────────────────────┐
+┌──────────────────────────────────────────────────────────────────┐
 │                     CONFIGURATION FILE                           │
 │         snapshot-config.json  /  snapshot.conf                   │
 │                                                                  │
 │  Defines: output directory, retention policy, enabled capture    │
 │  categories, severity thresholds, report format preferences      │
-└───────────────────────────┬─────────────────────────────────────┘
+└───────────────────────────┬──────────────────────────────────────┘
                             │
                             ▼
-┌─────────────────────────────────────────────────────────────────┐
+┌──────────────────────────────────────────────────────────────────┐
 │                    SNAPSHOT SCRIPT (Stage 1)                     │
 │      New-ConfigSnapshot.ps1  /  take-snapshot.sh                 │
 │                                                                  │
 │  Collects server state across all enabled capture categories.    │
 │  Writes one timestamped JSON snapshot file per execution.        │
 │  Adds metadata block: hostname, OS version, timestamp, schema.   │
-└───────────────────────────┬─────────────────────────────────────┘
+└───────────────────────────┬──────────────────────────────────────┘
                             │
                             ▼
-┌─────────────────────────────────────────────────────────────────┐
+┌──────────────────────────────────────────────────────────────────┐
 │                     SNAPSHOT STORAGE                             │
 │              (local directory defined in config)                 │
 │                                                                  │
@@ -59,30 +59,30 @@ This toolkit is built on three operational principles.
 │                                                                  │
 │  Retention policy enforced at snapshot time.                     │
 │  Oldest snapshots removed when retention limit is exceeded.      │
-└──────────────┬──────────────────────────┬───────────────────────┘
+└──────────────┬──────────────────────────┬────────────────────────┘
                │                          │
                │ (baseline)               │ (comparison target)
                ▼                          ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                   COMPARISON SCRIPT (Stage 2)                    │
-│     Compare-ConfigSnapshots.ps1  /  compare-snapshots.sh         │
-│                                                                  │
-│  Accepts exactly two snapshot files as input.                    │
-│  Performs field-by-field comparison per capture category.        │
-│  Produces one structured diff JSON file.                         │
-│  Does not classify, score, or interpret - only identifies delta. │
+│                   COMPARISON SCRIPT (Stage 2)                   │
+│     Compare-ConfigSnapshots.ps1  /  compare-snapshots.sh        │
+│                                                                 │
+│  Accepts exactly two snapshot files as input.                   │
+│  Performs field-by-field comparison per capture category.       │
+│  Produces one structured diff JSON file.                        │
+│  Does not classify, score, or interpret - only identifies delta.│
 └───────────────────────────┬─────────────────────────────────────┘
                             │
                             ▼
-┌─────────────────────────────────────────────────────────────────┐
+┌──────────────────────────────────────────────────────────────────┐
 │                      DIFF STORAGE                                │
 │              (local directory defined in config)                 │
 │                                                                  │
 │  server01_diff_2025-10-01_vs_2025-10-08.json                     │
-└───────────────────────────┬─────────────────────────────────────┘
+└───────────────────────────┬──────────────────────────────────────┘
                             │
                             ▼
-┌─────────────────────────────────────────────────────────────────┐
+┌──────────────────────────────────────────────────────────────────┐
 │                   REPORT SCRIPT (Stage 3)                        │
 │        Invoke-DriftReport.ps1  /  drift-report.sh                │
 │                                                                  │
@@ -91,7 +91,7 @@ This toolkit is built on three operational principles.
 │  Produces two output files:                                      │
 │    - Markdown report (human-readable, ticket-ready)              │
 │    - JSON report (machine-readable, audit-ready)                 │
-└──────────────┬──────────────────────────┬───────────────────────┘
+└──────────────┬──────────────────────────┬────────────────────────┘
                │                          │
                ▼                          ▼
 ┌──────────────────────────┐  ┌──────────────────────────────────┐
