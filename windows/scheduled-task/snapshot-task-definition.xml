@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-16"?>
+<!--
+  PURPOSE:
+  This file is a reference Task Scheduler XML definition for the
+  ConfigDriftDetector-Snapshot task. It exists for two operational reasons:
+
+  1. AUDIT AND CHANGE MANAGEMENT
+     This file provides a human-readable, version-controlled record of
+     exactly what the scheduled task does, when it runs, and as whom.
+     During an audit or change review, this file can be compared directly
+     against the live task export (schtasks /query /tn "ConfigDriftDetector-Snapshot" /xml)
+     to confirm the running configuration matches the approved configuration.
+
+  2. ALTERNATIVE REGISTRATION METHOD
+     While Register-SnapshotTask.ps1 is the primary, recommended way to
+     create this task (it handles path validation, idempotency, and
+     verification), this XML file can alternatively be imported directly
+     using schtasks, which may be preferred in environments with strict
+     change control requiring a reviewed, static artifact rather than a
+     script execution.
+
+  USAGE — IMPORT THIS DEFINITION DIRECTLY:
+    Before importing, replace both placeholder paths below
+    (CONFIG_PATH_PLACEHOLDER and SCRIPT_PATH_PLACEHOLDER) with the absolute
+    paths to your snapshot-config.json and New-ConfigSnapshot.ps1 files.
+
+    schtasks /create /tn "ConfigDriftDetector-Snapshot" /xml "snapshot-task-definition.xml"
+
+  NOTE ON DRIFT BETWEEN THIS FILE AND THE LIVE TASK:
+    If Register-SnapshotTask.ps1 is used to register or update the task with
+    a different TriggerTime than the 02:00 default reflected below, this
+    static XML file will no longer exactly match the live task. This is
+    expected and acceptable — this file represents the documented default
+    configuration, not a live mirror. Operators who customise scheduling
+    should update this file's <StartBoundary> value to keep documentation
+    aligned with the live environment.
+-->
+<Task version="1.4" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">
+  <RegistrationInfo>
+    <Description>Captures a daily configuration snapshot for drift detection. Part of server-config-drift-detector toolkit. Do not modify manually -- re-run Register-SnapshotTask.ps1 to change configuration.</Description>
+    <Author>server-config-drift-detector</Author>
+    <URI>\ConfigDriftDetector-Snapshot</URI>
+  </RegistrationInfo>
+  <Triggers>
+    <CalendarTrigger>
+      <StartBoundary>2025-10-01T02:00:00</StartBoundary>
+      <Enabled>true</Enabled>
+      <ScheduleByDay>
+        <DaysInterval>1</DaysInterval>
+      </ScheduleByDay>
+    </CalendarTrigger>
+  </Triggers>
+  <Principals>
+    <Principal id="Author">
+      <UserId>S-1-5-18</UserId>
+      <RunLevel>HighestAvailable</RunLevel>
+    </Principal>
+  </Principals>
+  <Settings>
+    <MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy>
+    <DisallowStartIfOnBatteries>false</DisallowStartIfOnBatteries>
+    <StopIfGoingOnBatteries>false</StopIfGoingOnBatteries>
+    <AllowHardTerminate>true</AllowHardTerminate>
+    <StartWhenAvailable>true</StartWhenAvailable>
+    <RunOnlyIfNetworkAvailable>false</RunOnlyIfNetworkAvailable>
+    <IdleSettings>
+      <StopOnIdleEnd>false</StopOnIdleEnd>
+      <RestartOnIdle>false</RestartOnIdle>
+    </IdleSettings>
+    <AllowStartOnDemand>true</AllowStartOnDemand>
+    <Enabled>true</Enabled>
+    <Hidden>false</Hidden>
+    <RunOnlyIfIdle>false</RunOnlyIfIdle>
+    <DisallowStartOnRemoteAppSession>false</DisallowStartOnRemoteAppSession>
+    <UseUnifiedSchedulingEngine>true</UseUnifiedSchedulingEngine>
+    <WakeToRun>false</WakeToRun>
+    <ExecutionTimeLimit>PT30M</ExecutionTimeLimit>
+    <Priority>7</Priority>
+    <RestartOnFailure>
+      <Interval>PT5M</Interval>
+      <Count>3</Count>
+    </RestartOnFailure>
+  </Settings>
+  <Actions Context="Author">
+    <Exec>
+      <Command>powershell.exe</Command>
+      <Arguments>-NoProfile -ExecutionPolicy Bypass -File "SCRIPT_PATH_PLACEHOLDER\New-ConfigSnapshot.ps1" -ConfigPath "CONFIG_PATH_PLACEHOLDER\snapshot-config.json" -Label "scheduled"</Arguments>
+    </Exec>
+  </Actions>
+</Task>
