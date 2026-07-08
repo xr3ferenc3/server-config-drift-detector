@@ -20,11 +20,11 @@ A MAJOR version increment means existing snapshot files may not be compatible wi
 
 ## [Unreleased]
 
-Changes staged for the next release are listed here during development.
+No changes pending.
 
 ---
 
-## [1.0.0] - 2026-07-08
+## [1.0.0] - 2026-07-09
 
 ### Added
 
