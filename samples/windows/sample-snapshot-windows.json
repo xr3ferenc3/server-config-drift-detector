@@ -1,0 +1,298 @@
+{
+  "metadata": {
+    "schema_version": "1.0",
+    "hostname": "SERVER01",
+    "platform": "windows",
+    "os_version": "Windows Server 2022 Standard (10.0.20348)",
+    "os_build": "20348",
+    "last_boot_time": "2025-09-29T03:12:44Z",
+    "powershell_version": "5.1.20348.2340",
+    "snapshot_label": "baseline",
+    "snapshot_timestamp": "2025-10-01T02:00:11Z",
+    "script_version": "1.0.0",
+    "captured_by": "NT AUTHORITY\\SYSTEM"
+  },
+  "software": [
+    {
+      "name": "7-Zip 24.08 (x64)",
+      "version": "24.08.00.0",
+      "publisher": "Igor Pavlov",
+      "install_date": "20250915"
+    },
+    {
+      "name": "Git version 2.46.0",
+      "version": "2.46.0",
+      "publisher": "The Git Development Community",
+      "install_date": "20250915"
+    },
+    {
+      "name": "Microsoft .NET Framework 4.8",
+      "version": "4.8.03761",
+      "publisher": "Microsoft Corporation",
+      "install_date": "20250901"
+    },
+    {
+      "name": "Microsoft Visual C++ 2019 Redistributable (x64)",
+      "version": "14.40.33810.0",
+      "publisher": "Microsoft Corporation",
+      "install_date": "20250901"
+    },
+    {
+      "name": "Notepad++ (64-bit x64)",
+      "version": "8.7.1",
+      "publisher": "Notepad++ Team",
+      "install_date": "20250915"
+    },
+    {
+      "name": "Windows Admin Center",
+      "version": "2311.2.0",
+      "publisher": "Microsoft Corporation",
+      "install_date": "20250910"
+    }
+  ],
+  "services": [
+    {
+      "name": "BFE",
+      "display_name": "Base Filtering Engine",
+      "status": "Running",
+      "start_type": "Automatic"
+    },
+    {
+      "name": "EventLog",
+      "display_name": "Windows Event Log",
+      "status": "Running",
+      "start_type": "Automatic"
+    },
+    {
+      "name": "MpsSvc",
+      "display_name": "Windows Defender Firewall",
+      "status": "Running",
+      "start_type": "Automatic"
+    },
+    {
+      "name": "RpcSs",
+      "display_name": "Remote Procedure Call (RPC)",
+      "status": "Running",
+      "start_type": "Automatic"
+    },
+    {
+      "name": "SamSs",
+      "display_name": "Security Accounts Manager",
+      "status": "Running",
+      "start_type": "Automatic"
+    },
+    {
+      "name": "Spooler",
+      "display_name": "Print Spooler",
+      "status": "Stopped",
+      "start_type": "Disabled"
+    },
+    {
+      "name": "W32Time",
+      "display_name": "Windows Time",
+      "status": "Running",
+      "start_type": "Automatic"
+    },
+    {
+      "name": "WinDefend",
+      "display_name": "Microsoft Defender Antivirus Service",
+      "status": "Running",
+      "start_type": "Automatic"
+    },
+    {
+      "name": "wuauserv",
+      "display_name": "Windows Update",
+      "status": "Running",
+      "start_type": "Manual"
+    }
+  ],
+  "local_users": [
+    {
+      "username": "Administrator",
+      "enabled": true,
+      "description": "Built-in account for administering the computer/domain",
+      "last_logon": "2025-09-30T14:22:08Z",
+      "password_last_set": "2025-09-01T08:00:00Z",
+      "group_memberships": [
+        "Administrators"
+      ]
+    },
+    {
+      "username": "DefaultAccount",
+      "enabled": false,
+      "description": "A user account managed by the system.",
+      "last_logon": "never",
+      "password_last_set": "unknown",
+      "group_memberships": [
+        "System Managed Accounts Group"
+      ]
+    },
+    {
+      "username": "Guest",
+      "enabled": false,
+      "description": "Built-in account for guest access to the computer/domain",
+      "last_logon": "never",
+      "password_last_set": "unknown",
+      "group_memberships": [
+        "Guests"
+      ]
+    },
+    {
+      "username": "svc_backup",
+      "enabled": true,
+      "description": "Service account for scheduled backup operations",
+      "last_logon": "2025-09-30T02:05:12Z",
+      "password_last_set": "2025-09-01T08:00:00Z",
+      "group_memberships": [
+        "Backup Operators"
+      ]
+    },
+    {
+      "username": "WDAGUtilityAccount",
+      "enabled": false,
+      "description": "A user account managed and used by the system for Windows Defender Application Guard scenarios.",
+      "last_logon": "never",
+      "password_last_set": "2025-09-01T08:00:00Z",
+      "group_memberships": []
+    }
+  ],
+  "firewall": [
+    {
+      "name": "ConfigDriftDetector-BlockInbound-8080",
+      "display_name": "Block Inbound Port 8080",
+      "enabled": "True",
+      "direction": "Inbound",
+      "action": "Block",
+      "profile": "Any",
+      "protocol": "TCP",
+      "local_port": "8080",
+      "remote_address": "Any"
+    },
+    {
+      "name": "RemoteDesktop-UserMode-In-TCP",
+      "display_name": "Remote Desktop - User Mode (TCP-In)",
+      "enabled": "True",
+      "direction": "Inbound",
+      "action": "Allow",
+      "profile": "Private,Domain",
+      "protocol": "TCP",
+      "local_port": "3389",
+      "remote_address": "Any"
+    },
+    {
+      "name": "WinRM-HTTP-In-TCP",
+      "display_name": "Windows Remote Management (HTTP-In)",
+      "enabled": "True",
+      "direction": "Inbound",
+      "action": "Allow",
+      "profile": "Any",
+      "protocol": "TCP",
+      "local_port": "5985",
+      "remote_address": "Any"
+    },
+    {
+      "name": "WindowsDefenderFirewall-EstablishedConnections-Out",
+      "display_name": "Core Networking - Established Connections (TCP-Out)",
+      "enabled": "True",
+      "direction": "Outbound",
+      "action": "Allow",
+      "profile": "Any",
+      "protocol": "TCP",
+      "local_port": "Any",
+      "remote_address": "Any"
+    }
+  ],
+  "scheduled_jobs": [
+    {
+      "name": "ConfigDriftDetector-Snapshot",
+      "path": "\\",
+      "state": "Ready",
+      "run_as_account": "SYSTEM",
+      "last_run_time": "never",
+      "next_run_time": "2025-10-02T02:00:00Z",
+      "action_summary": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\\Tools\\server-config-drift-detector\\windows\\scripts\\New-ConfigSnapshot.ps1 -ConfigPath C:\\Tools\\server-config-drift-detector\\windows\\config\\snapshot-config.json -Label scheduled",
+      "trigger_summary": "MSFT_TaskDailyTrigger"
+    },
+    {
+      "name": "WindowsDefenderCacheMaintenanceTask",
+      "path": "\\Microsoft\\Windows\\Windows Defender\\",
+      "state": "Ready",
+      "run_as_account": "SYSTEM",
+      "last_run_time": "2025-09-30T12:00:00Z",
+      "next_run_time": "2025-10-01T12:00:00Z",
+      "action_summary": "%ProgramFiles%\\Windows Defender\\MpCmdRun.exe -IdleTask -TaskName WdCacheMaintenance",
+      "trigger_summary": "MSFT_TaskDailyTrigger"
+    },
+    {
+      "name": "WindowsDefenderCleanup",
+      "path": "\\Microsoft\\Windows\\Windows Defender\\",
+      "state": "Ready",
+      "run_as_account": "SYSTEM",
+      "last_run_time": "2025-09-28T02:00:00Z",
+      "next_run_time": "2025-10-05T02:00:00Z",
+      "action_summary": "%ProgramFiles%\\Windows Defender\\MpCmdRun.exe -IdleTask -TaskName WdCleanup",
+      "trigger_summary": "MSFT_TaskWeeklyTrigger"
+    }
+  ],
+  "listening_ports": [
+    {
+      "protocol": "TCP",
+      "local_address": "0.0.0.0",
+      "local_port": 135,
+      "state": "Listen",
+      "owning_pid": 1024,
+      "owning_process": "svchost"
+    },
+    {
+      "protocol": "TCP",
+      "local_address": "0.0.0.0",
+      "local_port": 445,
+      "state": "Listen",
+      "owning_pid": 4,
+      "owning_process": "System"
+    },
+    {
+      "protocol": "TCP",
+      "local_address": "0.0.0.0",
+      "local_port": 3389,
+      "state": "Listen",
+      "owning_pid": 1188,
+      "owning_process": "TermService"
+    },
+    {
+      "protocol": "TCP",
+      "local_address": "0.0.0.0",
+      "local_port": 5985,
+      "state": "Listen",
+      "owning_pid": 4,
+      "owning_process": "System"
+    },
+    {
+      "protocol": "UDP",
+      "local_address": "0.0.0.0",
+      "local_port": 123,
+      "state": "Listen",
+      "owning_pid": 1200,
+      "owning_process": "svchost"
+    },
+    {
+      "protocol": "UDP",
+      "local_address": "0.0.0.0",
+      "local_port": 5353,
+      "state": "Listen",
+      "owning_pid": 1200,
+      "owning_process": "svchost"
+    }
+  ],
+  "platform_specific": {
+    "pending_updates": [
+      {
+        "title": "2025-09 Cumulative Update for .NET Framework 3.5 and 4.8.1 for Windows Server 2022 (KB5043138)",
+        "kb": "KB5043138",
+        "severity": "Important",
+        "category": "Update"
+      }
+    ]
+  },
+  "capture_errors": []
+}
